@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrewCo Algeria — Business Data Scenario</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:    #06101F;
+    --navy2:   #0B1E3A;
+    --navy3:   #112849;
+    --blue:    #1A6ECC;
+    --blue2:   #2E8EF0;
+    --accent:  #F5A623;
+    --gold:    #E8970D;
+    --green:   #0FAF75;
+    --red:     #E84545;
+    --purple:  #8B5CF6;
+    --teal:    #06B6D4;
+    --white:   #FFFFFF;
+    --gray:    #94A3B8;
+    --light:   #E8F1FB;
+  }
+
+  body {
+    background: var(--navy);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--white);
+    min-height: 100vh;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  /* ── BACKGROUND TEXTURE ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 10% 20%, rgba(26,110,204,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 90% 80%, rgba(245,166,35,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 50% 50%, rgba(6,182,212,0.05) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 48px 32px 80px; }
+
+  /* ══════════════════════ HEADER ══════════════════════ */
+  .header { text-align: center; margin-bottom: 56px; }
+
+  .badge {
+    display: inline-block;
+    background: rgba(26,110,204,0.2);
+    border: 1px solid rgba(46,142,240,0.4);
+    color: var(--blue2);
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    padding: 6px 18px;
+    border-radius: 100px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+  .header h1 span { color: var(--accent); }
+
+  .header p {
+    font-size: 16px;
+    color: var(--gray);
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* ══════════════════════ COMPANY CARD ══════════════════════ */
+  .company-card {
+    background: linear-gradient(135deg, var(--navy3) 0%, #0F2340 100%);
+    border: 1px solid rgba(46,142,240,0.25);
+    border-radius: 20px;
+    padding: 32px 36px;
+    margin-bottom: 48px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 32px;
+    align-items: center;
+  }
+
+  .company-logo {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, var(--accent), var(--gold));
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    flex-shrink: 0;
+    box-shadow: 0 8px 32px rgba(245,166,35,0.3);
+  }
+
+  .company-info h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px; font-weight: 800;
+    margin-bottom: 6px;
+  }
+  .company-info p { color: var(--gray); font-size: 14px; line-height: 1.6; }
+
+  .company-stats { display: flex; gap: 28px; }
+  .stat { text-align: center; }
+  .stat .num {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px; font-weight: 800;
+    color: var(--accent);
+    display: block;
+  }
+  .stat .lbl { font-size: 11px; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* ══════════════════════ SECTION TITLE ══════════════════════ */
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(to right, rgba(245,166,35,0.3), transparent);
+  }
+
+  /* ══════════════════════ 5W GRID ══════════════════════ */
+  .w5-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto auto;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  /* HOW spans full bottom row */
+  .w5-grid .card-how { grid-column: 1 / -1; }
+
+  .w-card {
+    background: var(--navy2);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+  }
+  .w-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  }
+
+  .w-card-header {
+    padding: 16px 20px 12px;
+    display: flex; align-items: center; gap: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .w-letter {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px; font-weight: 800;
+    line-height: 1;
+  }
+
+  .w-title-block { flex: 1; }
+  .w-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px; font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .w-question { font-size: 11px; color: var(--gray); }
+
+  .w-icon-circle {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .w-card-body { padding: 16px 20px 18px; }
+
+  .w-answer {
+    font-size: 14px;
+    line-height: 1.65;
+    color: #CBD5E1;
+    margin-bottom: 12px;
+  }
+
+  .w-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    font-size: 11px; font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 100px;
+    border: 1px solid;
+  }
+
+  /* HOW card body layout */
+  .how-body { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+  .how-item {
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px;
+    padding: 12px 14px;
+    text-align: center;
+  }
+  .how-item .hi-icon { font-size: 22px; margin-bottom: 6px; }
+  .how-item .hi-name { font-size: 12px; font-weight: 600; margin-bottom: 3px; }
+  .how-item .hi-desc { font-size: 10px; color: var(--gray); line-height: 1.4; }
+
+  /* colour variants */
+  .who-c   { border-top: 3px solid #2E8EF0; }
+  .what-c  { border-top: 3px solid #8B5CF6; }
+  .when-c  { border-top: 3px solid #10B981; }
+  .where-c { border-top: 3px solid #F59E0B; }
+  .why-c   { border-top: 3px solid #EF4444; }
+  .how-c   { border-top: 3px solid #06B6D4; }
+
+  /* ══════════════════════ DATASET TABLE ══════════════════════ */
+  .dataset-section { margin-bottom: 48px; }
+
+  .table-wrapper {
+    background: var(--navy2);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: var(--navy3); }
+  thead th {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--blue2);
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.03); }
+  tbody td { padding: 11px 16px; font-size: 13px; color: #CBD5E1; }
+  tbody td:first-child { font-family: 'Syne', sans-serif; font-weight: 600; color: var(--white); font-size: 12px; }
+  tbody td.type-badge span {
+    font-size: 10px; padding: 2px 8px; border-radius: 100px;
+    font-weight: 600;
+  }
+  .type-num  { background: rgba(46,142,240,0.15); color: #7DD3FC; border: 1px solid rgba(46,142,240,0.3); }
+  .type-str  { background: rgba(139,92,246,0.15); color: #C4B5FD; border: 1px solid rgba(139,92,246,0.3); }
+  .type-date { background: rgba(16,185,129,0.15); color: #6EE7B7; border: 1px solid rgba(16,185,129,0.3); }
+  .type-cat  { background: rgba(245,158,11,0.15); color: #FCD34D; border: 1px solid rgba(245,158,11,0.3); }
+  .type-bool { background: rgba(239,68,68,0.15);  color: #FCA5A5; border: 1px solid rgba(239,68,68,0.3); }
+
+  /* sample data row */
+  .sample-row td { font-size: 12px; color: #64748B; font-style: italic; }
+  .sample-row td:first-child { color: #64748B; }
+
+  /* ══════════════════════ INSIGHTS GRID ══════════════════════ */
+  .insights-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .insight-card {
+    background: var(--navy2);
+    border-radius: 16px;
+    padding: 22px;
+    border: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s;
+  }
+  .insight-card:hover { transform: translateY(-2px); }
+  .insight-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+
+  .ic-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--gray);
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .ic-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  .ic-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px; font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .ic-desc { font-size: 13px; color: #94A3B8; line-height: 1.65; margin-bottom: 14px; }
+
+  .ic-example {
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: #CBD5E1;
+    line-height: 1.6;
+    border-left: 3px solid;
+  }
+
+  .ic-tools { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
+  .tool-tag {
+    font-size: 10px; padding: 2px 8px;
+    border-radius: 100px;
+    background: rgba(255,255,255,0.06);
+    color: var(--gray);
+    font-weight: 500;
+  }
+
+  /* ══════════════════════ FLOW DIAGRAM ══════════════════════ */
+  .flow-section { margin-bottom: 48px; }
+  .flow-diagram {
+    background: var(--navy2);
+    border-radius: 20px;
+    padding: 36px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 0;
+  }
+
+  .flow-step {
+    flex: 1;
+    background: rgba(255,255,255,0.04);
+    border-radius: 14px;
+    padding: 18px 16px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.07);
+    position: relative;
+  }
+
+  .flow-step .fs-icon { font-size: 26px; margin-bottom: 8px; }
+  .flow-step .fs-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px; font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .flow-step .fs-desc { font-size: 11px; color: var(--gray); line-height: 1.5; }
+
+  .flow-arrow {
+    width: 40px; text-align: center;
+    font-size: 20px; color: rgba(255,255,255,0.2);
+    flex-shrink: 0;
+  }
+
+  .flow-results {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    gap: 12px;
+  }
+
+  .fr-item {
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 14px 12px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+  .fr-item .fri-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px; font-weight: 800;
+    display: block; margin-bottom: 4px;
+  }
+  .fr-item .fri-lbl { font-size: 10px; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* ══════════════════════ FOOTER ══════════════════════ */
+  .footer {
+    text-align: center;
+    padding-top: 32px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    color: var(--gray);
+    font-size: 13px;
+  }
+  .footer strong { color: var(--accent); }
+
+  /* ══════════════════════ ANIMATIONS ══════════════════════ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .header        { animation: fadeUp 0.6s ease both; }
+  .company-card  { animation: fadeUp 0.6s ease 0.1s both; }
+  .w5-grid       { animation: fadeUp 0.6s ease 0.2s both; }
+  .dataset-section{ animation: fadeUp 0.6s ease 0.3s both; }
+  .insights-grid { animation: fadeUp 0.6s ease 0.4s both; }
+  .flow-section  { animation: fadeUp 0.6s ease 0.5s both; }
+
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══ HEADER ══ -->
+  <div class="header">
+    <div class="badge">AI Masterclass — Session 02 · Business Data Scenario</div>
+    <h1>BrewCo Algeria<br><span>End-to-End Data Scenario</span></h1>
+    <p>A real Algerian coffee e-commerce brand. We apply the WWWWW-H framework, explore the dataset structure, and extract 6 meaningful business insights.</p>
+  </div>
+
+  <!-- ══ COMPANY CARD ══ -->
+  <div class="company-card">
+    <div class="company-logo">☕</div>
+    <div class="company-info">
+      <h2>BrewCo Algeria</h2>
+      <p>Premium coffee brand selling online & through 3 physical stores in Algiers, Oran, and Constantine.<br>
+      Products: espresso blends, capsules, brewing kits, accessories. Delivery across 48 wilayas.</p>
+    </div>
+    <div class="company-stats">
+      <div class="stat"><span class="num">3,500</span><span class="lbl">Customers</span></div>
+      <div class="stat"><span class="num">2 yrs</span><span class="lbl">of Data</span></div>
+      <div class="stat"><span class="num">87K</span><span class="lbl">Orders</span></div>
+      <div class="stat"><span class="num">14</span><span class="lbl">Products</span></div>
+    </div>
+  </div>
+
+  <!-- ══ WWWWW-H FRAMEWORK ══ -->
+  <div class="section-title">WWWWW-H Framework — Understanding the Data</div>
+  <div class="w5-grid">
+
+    <!-- WHO -->
+    <div class="w-card who-c">
+      <div class="w-card-header">
+        <div class="w-icon-circle" style="background:rgba(46,142,240,0.15)">👤</div>
+        <div class="w-title-block">
+          <div class="w-letter" style="color:#2E8EF0">WHO</div>
+          <div class="w-question">Who are the subjects of this data?</div>
+        </div>
+      </div>
+      <div class="w-card-body">
+        <div class="w-answer">
+          <strong style="color:#fff">3,500 registered customers</strong> across Algeria — mostly urban, aged 18–45, who purchased at least once between Jan 2023 and Dec 2024. Includes both individuals and small café businesses.
+        </div>
+        <div class="w-tags">
+          <span class="tag" style="color:#7DD3FC;border-color:rgba(46,142,240,0.3);background:rgba(46,142,240,0.1)">Individual buyers</span>
+          <span class="tag" style="color:#7DD3FC;border-color:rgba(46,142,240,0.3);background:rgba(46,142,240,0.1)">Small café owners</span>
+          <span class="tag" style="color:#7DD3FC;border-color:rgba(46,142,240,0.3);background:rgba(46,142,240,0.1)">18–45 age range</span>
+          <span class="tag" style="color:#7DD3FC;border-color:rgba(46,142,240,0.3);background:rgba(46,142,240,0.1)">48 wilayas</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHAT -->
+    <div class="w-card what-c">
+      <div class="w-card-header">
+        <div class="w-icon-circle" style="background:rgba(139,92,246,0.15)">📦</div>
+        <div class="w-title-block">
+          <div class="w-letter" style="color:#8B5CF6">WHAT</div>
+          <div class="w-question">What information is recorded?</div>
+        </div>
+      </div>
+      <div class="w-card-body">
+        <div class="w-answer">
+          Each row = one order line. The dataset stores the product purchased, quantity, unit price, total amount, customer ID, payment method, and order status (delivered / returned / pending).
+        </div>
+        <div class="w-tags">
+          <span class="tag" style="color:#C4B5FD;border-color:rgba(139,92,246,0.3);background:rgba(139,92,246,0.1)">Order details</span>
+          <span class="tag" style="color:#C4B5FD;border-color:rgba(139,92,246,0.3);background:rgba(139,92,246,0.1)">Products & prices</span>
+          <span class="tag" style="color:#C4B5FD;border-color:rgba(139,92,246,0.3);background:rgba(139,92,246,0.1)">Payment method</span>
+          <span class="tag" style="color:#C4B5FD;border-color:rgba(139,92,246,0.3);background:rgba(139,92,246,0.1)">Order status</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHEN -->
+    <div class="w-card when-c">
+      <div class="w-card-header">
+        <div class="w-icon-circle" style="background:rgba(16,185,129,0.15)">📅</div>
+        <div class="w-title-block">
+          <div class="w-letter" style="color:#10B981">WHEN</div>
+          <div class="w-question">What time period does it cover?</div>
+        </div>
+      </div>
+      <div class="w-card-body">
+        <div class="w-answer">
+          <strong style="color:#fff">January 2023 → December 2024</strong> — 2 full calendar years. Includes Ramadan periods, summer peak, and Eid holiday spikes. Each order has an exact timestamp (date + hour).
+        </div>
+        <div class="w-tags">
+          <span class="tag" style="color:#6EE7B7;border-color:rgba(16,185,129,0.3);background:rgba(16,185,129,0.1)">2 full years</span>
+          <span class="tag" style="color:#6EE7B7;border-color:rgba(16,185,129,0.3);background:rgba(16,185,129,0.1)">Ramadan seasons</span>
+          <span class="tag" style="color:#6EE7B7;border-color:rgba(16,185,129,0.3);background:rgba(16,185,129,0.1)">Hourly timestamps</span>
+          <span class="tag" style="color:#6EE7B7;border-color:rgba(16,185,129,0.3);background:rgba(16,185,129,0.1)">87K orders</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHERE -->
+    <div class="w-card where-c">
+      <div class="w-card-header">
+        <div class="w-icon-circle" style="background:rgba(245,158,11,0.15)">📍</div>
+        <div class="w-title-block">
+          <div class="w-letter" style="color:#F59E0B">WHERE</div>
+          <div class="w-question">Where was the data collected?</div>
+        </div>
+      </div>
+      <div class="w-card-body">
+        <div class="w-answer">
+          Orders placed via the <strong style="color:#fff">BrewCo website</strong> (65%), <strong style="color:#fff">mobile app</strong> (22%), and <strong style="color:#fff">3 physical stores</strong> (13%) in Algiers, Oran, and Constantine. Delivery recorded per wilaya.
+        </div>
+        <div class="w-tags">
+          <span class="tag" style="color:#FCD34D;border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.1)">Website 65%</span>
+          <span class="tag" style="color:#FCD34D;border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.1)">Mobile App 22%</span>
+          <span class="tag" style="color:#FCD34D;border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.1)">In-store 13%</span>
+          <span class="tag" style="color:#FCD34D;border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.1)">48 wilayas</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHY -->
+    <div class="w-card why-c">
+      <div class="w-card-header">
+        <div class="w-icon-circle" style="background:rgba(239,68,68,0.15)">🎯</div>
+        <div class="w-title-block">
+          <div class="w-letter" style="color:#EF4444">WHY</div>
+          <div class="w-question">Why does this data exist?</div>
+        </div>
+      </div>
+      <div class="w-card-body">
+        <div class="w-answer">
+          BrewCo collects this data to <strong style="color:#fff">reduce customer churn</strong>, <strong style="color:#fff">optimise inventory</strong> (avoid stockouts during Ramadan), <strong style="color:#fff">personalise recommendations</strong>, and <strong style="color:#fff">grow to 10,000 customers</strong> by 2025.
+        </div>
+        <div class="w-tags">
+          <span class="tag" style="color:#FCA5A5;border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.1)">Reduce churn</span>
+          <span class="tag" style="color:#FCA5A5;border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.1)">Stock optimisation</span>
+          <span class="tag" style="color:#FCA5A5;border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.1)">Personalisation</span>
+          <span class="tag" style="color:#FCA5A5;border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.1)">Growth target</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOW — spans full width -->
+    <div class="w-card how-c card-how">
+      <div class="w-card-header">
+        <div class="w-icon-circle" style="background:rgba(6,182,212,0.15)">⚙️</div>
+        <div class="w-title-block">
+          <div class="w-letter" style="color:#06B6D4">HOW</div>
+          <div class="w-question">How was this data collected? — 4 automatic systems, zero manual entry</div>
+        </div>
+      </div>
+      <div class="w-card-body">
+        <div class="how-body">
+          <div class="how-item">
+            <div class="hi-icon">🌐</div>
+            <div class="hi-name" style="color:#06B6D4">Website Tracking</div>
+            <div class="hi-desc">Every click, cart, checkout logged. Timestamp + device + browser captured automatically.</div>
+          </div>
+          <div class="how-item">
+            <div class="hi-icon">🏪</div>
+            <div class="hi-name" style="color:#06B6D4">POS System</div>
+            <div class="hi-desc">Point-of-sale terminal at each store. Every scan generates a transaction record instantly.</div>
+          </div>
+          <div class="how-item">
+            <div class="hi-icon">📱</div>
+            <div class="hi-name" style="color:#06B6D4">CRM Platform</div>
+            <div class="hi-desc">Links customer history across all channels. Tracks lifetime value, frequency, last purchase.</div>
+          </div>
+          <div class="how-item">
+            <div class="hi-icon">🚚</div>
+            <div class="hi-name" style="color:#06B6D4">Delivery App</div>
+            <div class="hi-desc">Yalidine / Maystro API. Captures wilaya, delivery time, return reasons automatically.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end w5-grid -->
+
+  <!-- ══ DATASET STRUCTURE ══ -->
+  <div class="dataset-section">
+    <div class="section-title">Dataset Structure — brewco_orders.csv</div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Column Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Example Value</th>
+            <th>Possible Issues</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:#64748B;font-size:11px">01</td>
+            <td>order_id</td>
+            <td class="type-badge"><span class="type-str">STRING</span></td>
+            <td>Unique identifier for each order</td>
+            <td style="font-family:monospace;font-size:12px;color:#94A3B8">BC-2023-00142</td>
+            <td style="color:#EF4444;font-size:12px">—</td>
+          </tr>
+          <tr>
+            <td style="color:#64748B;font-size:11px">02</td>
+            <td>order_date</td>
+            <td class="type-badge"><span class="type-date">DATETIME</span></td>
+            <td>Date and time the order was placed</td>
+            <td style="font-family:monospace;font-size:12px;color:#94A3B8">2023-03-15 14:32:00</td>
+            <td style="color:#F59E0B;font-size:12px">Mixed formats (DD/MM vs YYYY-MM)</td>
+          </tr>
+          <tr>
+            <td style="color:#64748B;font-size:11px">03</td>
+            <td>customer_id</td>
+            <td class="type-badge"><span class="type-str">STRING</span></td>
+            <td>Anonymised customer identifier</td>
+            <td style="font-family:monospace;font-size:12px;color:#94A3B8">CUST-1842</td>
+            <td style="color:#EF4444;font-size:12px">18.3% missing (guest checkouts)</td>
+          </tr>
+          <tr>
+            <td style="color:#64748B;font-size:11px">04</td>
+            <td>product_name</td>
+            <td class="type-badge"><span class="type-cat">CATEGORY</span></td>
+            <td>Name of product ordered</td>
+            <td style="font-family:monospace;font-size:12px;color:#94A3B8">Espresso Blend 500g</td>
+            <td style="color:#F59E0B;font-size:12px">Typos: "Expresso", "espresso blend"</td>
+          </tr>
+          <tr>
+            <td style="color:#64748B;font-size:11px">05</td>
+            <td>quantity</td>
+            <td class="type-badge"><span class="type-num">INTEGER</span></td>
+            <td>Number of units ordered</td>
+            <td style="font-family:monospace;font-size:12px;color:#94A3B8">2</td>
+            <td style="color:#EF4444;font-size:12px">Negative values = returns (need flag)</td>
+          </tr>
+          <tr>
+            <td style="color:#64748B;font-size:11px">06</td>
+            <td>unit_price</td>
+            <td class="type-badge"><span class="type-num">FLOAT</span></td>
+            <td>Price per unit in Algerian Dinar</td>
+            <td style="font-family:monospace;font-size:12px;color:#94A3B8">2450.00</td>
+            <td style="color:#EF4444;font-size:12px">Outlier: 0 DZD (promo error), 99999</td>
+          </tr>
+          <tr>
+            <td style="color:#64748B;font-size:11px">07</td>
+            <td>total_amount</td>
+            <td class="type-badge"><span class="type-num">FLOAT</span></td>
+            <td>quantity × unit_price</td>
+            <td style="font-family:monospace;font-size:12px;color:#94A3B8">4900.00</td>
+            <td style="color:#F59E0B;font-size:12px">Stored as "4900 DZD" in some rows</td>
+          </tr>
+          <tr>
+            <td style="color:#64748B;font-size:11px">08</td>
+            <td>payment_method</td>
+            <td class="type-badge"><span class="type-cat">CATEGORY</span></td>
+            <td>How the customer paid</td>
+            <td style="font-family:monospace;font-size:12px;color:#94A3B8">Cash on Delivery</td>
+            <td style="color:#F59E0B;font-size:12px">"COD" vs "Cash on delivery" (same!)</td>
+          </tr>
+          <tr>
+            <td style="color:#64748B;font-size:11px">09</td>
+            <td>wilaya</td>
+            <td class="type-badge"><span class="type-cat">CATEGORY</span></td>
+            <td>Delivery wilaya (province)</td>
+            <td style="font-family:monospace;font-size:12px;color:#94A3B8">Algiers</td>
+            <td style="color:#F59E0B;font-size:12px">"alger" / "Alger" / "Algiers" — same!</td>
+          </tr>
+          <tr>
+            <td style="color:#64748B;font-size:11px">10</td>
+            <td>channel</td>
+            <td class="type-badge"><span class="type-cat">CATEGORY</span></td>
+            <td>Sales channel (web / app / store)</td>
+            <td style="font-family:monospace;font-size:12px;color:#94A3B8">website</td>
+            <td style="color:#64748B;font-size:12px">—</td>
+          </tr>
+          <tr>
+            <td style="color:#64748B;font-size:11px">11</td>
+            <td>order_status</td>
+            <td class="type-badge"><span class="type-cat">CATEGORY</span></td>
+            <td>Delivered / Returned / Pending</td>
+            <td style="font-family:monospace;font-size:12px;color:#94A3B8">Delivered</td>
+            <td style="color:#64748B;font-size:12px">—</td>
+          </tr>
+          <tr>
+            <td style="color:#64748B;font-size:11px">12</td>
+            <td>is_repeat_customer</td>
+            <td class="type-badge"><span class="type-bool">BOOLEAN</span></td>
+            <td>True if customer ordered before</td>
+            <td style="font-family:monospace;font-size:12px;color:#94A3B8">True</td>
+            <td style="color:#EF4444;font-size:12px">Stored as "1"/"0" or "True"/"False"</td>
+          </tr>
+          <!-- Sample row -->
+          <tr class="sample-row" style="background:rgba(6,182,212,0.04);border-top:1px solid rgba(6,182,212,0.15)">
+            <td colspan="2" style="color:#06B6D4;font-size:11px;font-weight:600;font-style:normal">SAMPLE ROW</td>
+            <td></td>
+            <td style="font-family:monospace;color:#94A3B8;font-size:11px">BC-2023-05821</td>
+            <td style="font-family:monospace;color:#94A3B8;font-size:11px">2023-03-28 21:14 | CUST-0912</td>
+            <td style="font-family:monospace;color:#94A3B8;font-size:11px">Capsules×3 | 1800 DZD | COD | Oran | Delivered</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ INSIGHTS ══ -->
+  <div class="section-title">6 Meaningful Insights We Can Extract</div>
+  <div class="insights-grid">
+
+    <div class="insight-card" style="--c:#2E8EF0">
+      <style>.insight-card:nth-child(1)::before{background:var(--blue2)}</style>
+      <div class="ic-num"><span class="ic-dot" style="background:#2E8EF0"></span>INSIGHT 01</div>
+      <div class="ic-title" style="color:#7DD3FC">Best-Selling Products by Wilaya</div>
+      <div class="ic-desc">Which products are most popular in each city? Algiers may prefer capsules (fast, urban lifestyle) while Constantine may prefer whole-bean blends (traditional coffee culture).</div>
+      <div class="ic-example" style="border-color:#2E8EF0">
+        📊 <strong>Chart:</strong> Grouped Bar Chart<br>
+        df.groupby(['wilaya','product_name'])['quantity'].sum()<br>
+        → Algiers: Capsules 42% | Constantine: Blend 500g 61%
+      </div>
+      <div class="ic-tools"><span class="tool-tag">groupby</span><span class="tool-tag">bar chart</span><span class="tool-tag">pivot table</span></div>
+    </div>
+
+    <div class="insight-card">
+      <style>.insight-card:nth-child(2)::before{background:#8B5CF6}</style>
+      <div class="ic-num"><span class="ic-dot" style="background:#8B5CF6"></span>INSIGHT 02</div>
+      <div class="ic-title" style="color:#C4B5FD">Peak Order Hours & Days</div>
+      <div class="ic-desc">When do customers actually order? In Algeria, expect a Ramadan spike after Iftar (9–11 PM). Knowing peak times optimises delivery staff and server load.</div>
+      <div class="ic-example" style="border-color:#8B5CF6">
+        📈 <strong>Chart:</strong> Heatmap (Hour × Day of Week)<br>
+        df['hour'] = df['order_date'].dt.hour<br>
+        → Peak: Thursday 9 PM (pre-weekend Iftar)
+      </div>
+      <div class="ic-tools"><span class="tool-tag">dt.hour</span><span class="tool-tag">heatmap</span><span class="tool-tag">pivot</span></div>
+    </div>
+
+    <div class="insight-card">
+      <style>.insight-card:nth-child(3)::before{background:#10B981}</style>
+      <div class="ic-num"><span class="ic-dot" style="background:#10B981"></span>INSIGHT 03</div>
+      <div class="ic-title" style="color:#6EE7B7">Loyal vs One-Time Customers</div>
+      <div class="ic-desc">What % of revenue comes from repeat customers? If 80% of revenue comes from 20% of customers, BrewCo should invest in loyalty programs rather than new acquisition.</div>
+      <div class="ic-example" style="border-color:#10B981">
+        🍩 <strong>Chart:</strong> Pie Chart + Bar Chart<br>
+        df['is_repeat_customer'].value_counts()<br>
+        → 68% repeat | 32% one-time | Repeat = 84% of revenue
+      </div>
+      <div class="ic-tools"><span class="tool-tag">value_counts</span><span class="tool-tag">pie chart</span><span class="tool-tag">segmentation</span></div>
+    </div>
+
+    <div class="insight-card">
+      <style>.insight-card:nth-child(4)::before{background:#F59E0B}</style>
+      <div class="ic-num"><span class="ic-dot" style="background:#F59E0B"></span>INSIGHT 04</div>
+      <div class="ic-title" style="color:#FCD34D">Payment Method Preferences</div>
+      <div class="ic-desc">Does Algeria still rely on Cash on Delivery? Knowing this helps BrewCo decide whether to invest in Dahabia / CIB online payment infrastructure or keep COD as primary.</div>
+      <div class="ic-example" style="border-color:#F59E0B">
+        🍩 <strong>Chart:</strong> Donut Chart<br>
+        df['payment_method'].value_counts(normalize=True)<br>
+        → COD: 71% | CIB Online: 19% | Dahabia: 10%
+      </div>
+      <div class="ic-tools"><span class="tool-tag">value_counts</span><span class="tool-tag">donut chart</span><span class="tool-tag">normalize</span></div>
+    </div>
+
+    <div class="insight-card">
+      <style>.insight-card:nth-child(5)::before{background:#EF4444}</style>
+      <div class="ic-num"><span class="ic-dot" style="background:#EF4444"></span>INSIGHT 05</div>
+      <div class="ic-title" style="color:#FCA5A5">Return Rate by Product</div>
+      <div class="ic-desc">Which products get returned most? Negative quantity = return. High return rate on a product signals quality issues, misleading description, or packaging problems.</div>
+      <div class="ic-example" style="border-color:#EF4444">
+        📊 <strong>Chart:</strong> Horizontal Bar Chart<br>
+        returns = df[df['quantity'] &lt; 0]<br>
+        → Brewing Kit: 14% return rate ← needs investigation
+      </div>
+      <div class="ic-tools"><span class="tool-tag">filtering</span><span class="tool-tag">bar chart</span><span class="tool-tag">quality control</span></div>
+    </div>
+
+    <div class="insight-card">
+      <style>.insight-card:nth-child(6)::before{background:#06B6D4}</style>
+      <div class="ic-num"><span class="ic-dot" style="background:#06B6D4"></span>INSIGHT 06</div>
+      <div class="ic-title" style="color:#67E8F9">Seasonal Demand Patterns</div>
+      <div class="ic-desc">How does revenue change across the year? Ramadan = massive spike. Summer = drop. Eid = gift sets peak. BrewCo needs 3× inventory during Ramadan or will lose sales.</div>
+      <div class="ic-example" style="border-color:#06B6D4">
+        📈 <strong>Chart:</strong> Line Chart (Monthly Revenue)<br>
+        df.groupby(df['order_date'].dt.month)['total_amount'].sum()<br>
+        → March (Ramadan) = 3.2× average month revenue
+      </div>
+      <div class="ic-tools"><span class="tool-tag">dt.month</span><span class="tool-tag">line chart</span><span class="tool-tag">resample</span></div>
+    </div>
+
+  </div><!-- end insights grid -->
+
+  <!-- ══ DATA PIPELINE FLOW ══ -->
+  <div class="flow-section">
+    <div class="section-title">From Raw Data → Business Decision — The Pipeline</div>
+    <div class="flow-diagram">
+
+      <div class="flow-row">
+        <div class="flow-step" style="border-top:3px solid #2E8EF0">
+          <div class="fs-icon">🗄️</div>
+          <div class="fs-title" style="color:#7DD3FC">RAW DATA</div>
+          <div class="fs-desc">87K rows · 12 cols · Mixed types · Missing values · Duplicates</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step" style="border-top:3px solid #8B5CF6">
+          <div class="fs-icon">🔍</div>
+          <div class="fs-title" style="color:#C4B5FD">WWWWW-H</div>
+          <div class="fs-desc">Understand the context before touching any code</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step" style="border-top:3px solid #10B981">
+          <div class="fs-icon">📊</div>
+          <div class="fs-title" style="color:#6EE7B7">EDA</div>
+          <div class="fs-desc">Visualise distributions, find patterns & anomalies</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step" style="border-top:3px solid #F59E0B">
+          <div class="fs-icon">🧹</div>
+          <div class="fs-title" style="color:#FCD34D">CLEAN</div>
+          <div class="fs-desc">Fix missing, types, duplicates, outliers</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step" style="border-top:3px solid #06B6D4">
+          <div class="fs-icon">💡</div>
+          <div class="fs-title" style="color:#67E8F9">INSIGHTS</div>
+          <div class="fs-desc">Extract the 6 business answers that drive decisions</div>
+        </div>
+      </div>
+
+      <div class="flow-results">
+        <div class="fr-item">
+          <span class="fri-val" style="color:#2E8EF0">71%</span>
+          <span class="fri-lbl">COD preferred</span>
+        </div>
+        <div class="fr-item">
+          <span class="fri-val" style="color:#10B981">84%</span>
+          <span class="fri-lbl">Revenue from repeat customers</span>
+        </div>
+        <div class="fr-item">
+          <span class="fri-val" style="color:#F59E0B">3.2×</span>
+          <span class="fri-lbl">Ramadan revenue spike</span>
+        </div>
+        <div class="fr-item">
+          <span class="fri-val" style="color:#EF4444">14%</span>
+          <span class="fri-lbl">Brewing kit return rate</span>
+        </div>
+        <div class="fr-item">
+          <span class="fri-val" style="color:#06B6D4">9 PM</span>
+          <span class="fri-lbl">Peak order hour</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ FOOTER ══ -->
+  <div class="footer">
+    <strong>BrewCo Algeria — Business Data Scenario</strong> · AI Masterclass Session 02 · BrainerX School, Constantine<br>
+    <span style="font-size:12px;margin-top:6px;display:block">Instructor: Mansouri Ahmed · Data is fictional and for educational purposes only</span>
+  </div>
+
+</div>
+</body>
+</html>
